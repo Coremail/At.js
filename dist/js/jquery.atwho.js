@@ -4,25 +4,33 @@
  * Homepage: http://ichord.github.com/At.js
  * License: MIT
  */
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    // AMD. Register as an anonymous module unless amdModuleId is set
-    define(["jquery"], function (a0) {
-      return (factory(a0));
-    });
-  } else if (typeof exports === 'object') {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like environments that support module.exports,
-    // like Node.
-    if(window.$ || window.jQuery){
-      module.exports = factory(jQuery);
+(function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['jquery'], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        // Node/CommonJS
+        module.exports = function( root, jQuery ) {
+            if ( jQuery === undefined ) {
+                // require('jQuery') returns a factory that requires window to
+                // build a jQuery instance, we normalize how we use modules
+                // that require this pattern but the window provided is a noop
+                // if it's defined (how jquery works)
+                if ( typeof window !== 'undefined' ) {
+                    jQuery = require('jquery');
+                }
+                else {
+                    jQuery = require('jquery')(root);
+                }
+            }
+            factory(jQuery);
+            return jQuery;
+        };
     } else {
-      module.exports = factory(require("jquery"));
+        // Browser globals
+        factory(jQuery);
     }
-  } else {
-    factory(jQuery);
-  }
-}(this, function ($) {
+}(function ($) {
 var DEFAULT_CALLBACKS, KEY_CODE;
 
 KEY_CODE = {
